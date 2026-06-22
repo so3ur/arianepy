@@ -1,0 +1,579 @@
+#LyX 2.4 created this file. For more info see https://www.lyx.org/
+\lyxformat 620
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children no
+\language american
+\language_package default
+\inputencoding utf8
+\fontencoding auto
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_roman_osf false
+\font_sans_osf false
+\font_typewriter_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\float_placement class
+\float_alignment class
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_formatted_ref 0
+\use_minted 0
+\use_lineno 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tablestyle default
+\tracking_changes false
+\output_changes false
+\change_bars false
+\postpone_fragile_content true
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\docbook_table_output 0
+\docbook_mathml_prefix 1
+\end_header
+
+\begin_body
+
+\begin_layout Title
+
+\series bold
+TM Simulation - trajectoire de fusée:
+
+\series default
+ Tests et étape 2
+\end_layout
+
+\begin_layout Author
+Atalia Abraham
+\end_layout
+
+\begin_layout Date
+Rendu du 19.04.26
+\end_layout
+
+\begin_layout Section
+Introduction et théorie de l'étape 1
+\end_layout
+
+\begin_layout Subsection
+Choix du phénomène
+\end_layout
+
+\begin_layout Standard
+Tout d'abord,
+ j'ai choisi ce phénomène parce qu'il est intéressant de pouvoir visualiser par le moyen d'une simulation les différentes forces qui agissent sur une fusée.
+ Une simulation permet aussi de prédire le comportement au fil du temps selon les propriétés du véhicule (dont la masse,
+ par exemple).
+ Enfin,
+ j’ai principalement choisi de faire cette simulation par intérêt pour l’aérodynamique.
+\end_layout
+
+\begin_layout Subsection
+Décomposition en plusieurs étapes
+\end_layout
+
+\begin_layout Standard
+1.
+ Trajectoire simple avec les 4 forces aérodynamiques
+\end_layout
+
+\begin_layout Standard
+2.
+ Prise en compte des étages,
+ de la gravitation 
+\end_layout
+
+\begin_layout Standard
+3.
+ Prise en compte de la pression atmosphèrique et autres détails (gravity turn)
+\end_layout
+
+\begin_layout Subsection
+Théorie
+\end_layout
+
+\begin_layout Standard
+La trajéctoire dépend de 4 forces:
+\end_layout
+
+\begin_layout Subsubsection*
+La poussée:
+\end_layout
+
+\begin_layout Subsubsection*
+
+\size larger
+\begin_inset Formula $T=\dot{m}\varDelta v$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+La gravité:
+\end_layout
+
+\begin_layout Standard
+
+\size larger
+\begin_inset Formula $W=mg$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+La portance:
+\end_layout
+
+\begin_layout Standard
+
+\size larger
+\begin_inset Formula $L=\frac{1}{2}\rho v^{2}AC_{l}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+La traînée:
+\end_layout
+
+\begin_layout Standard
+
+\size larger
+\begin_inset Formula $D=\frac{1}{2}\rho v^{2}AC_{d}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+—
+—
+—
+
+\end_layout
+
+\begin_layout Standard
+Légende:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\dot{m}$
+\end_inset
+
+= débit de masse
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\rho$
+\end_inset
+
+= masse volumique
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $C_{l}$
+\end_inset
+
+= coéfficient de portée
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $C_{d}$
+\end_inset
+
+= coéfficient de traînée 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $v$
+\end_inset
+
+= vitesse
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $A$
+\end_inset
+
+= aire (du véhicule)
+\end_layout
+
+\begin_layout Section
+Point de situation
+\end_layout
+
+\begin_layout Standard
+À présent,
+ la première étape de la simulation est finie:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename figures/P1hauteur.png
+	scale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+—
+ Nous avons obtenu un graphique de la position selon l'axe y en prenant en compte les 4 forces aérodynamiques (les frottements,
+ la poussée,
+ la portance,
+ et la pesanteur).
+ Nous pouvons observer,
+ qu'au bout de 20'000 mètres,
+ la fusée Ariane 62 s'échoue.
+ Nous avons également étudié l'effet qu'avait le débit de masse en observant la vitesse maximale atteinte en faisant varier le débit de masse (valeurs allant de 100 à 5000):
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename figures/Vmaxdt0.02.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+—
+ Afin d'assurer que tout fonctionne corrèctement,
+ il a fallu mettre quelques tests en place:
+\end_layout
+
+\begin_layout Section
+Tests et problèmes rencontrés
+\end_layout
+
+\begin_layout Standard
+Au niveau du graphique de la hauteur,
+ le code n'est pas trop complexe et ne nécessite pas de tests très intenses,
+ mais afin de vérifier que tout soit normal au niveau des calculs,
+ il se trouve,
+ à la fin de ces-derniers,
+ un:
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+\color violet
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+print(v_y)
+\end_layout
+
+\end_inset
+
+
+\family default
+\size default
+\color inherit
+En affichant les vitesses y au fur et à mesure,
+ on peut vérifier qu'elle prend en ampleur et que les valeurs ne sont pas,
+ par exemple,
+ négatives ou oscillantes.
+ Si tout va bien,
+ la vitesse devrait croitre et la dernière doit être le maximum,
+ avant que la fusée n'aie plus de carburant.
+ Cette ligne de code permet également de vérifier que les calculs soient faits avant d'afficher le graphique,
+ au cas où il ne s'afficherait pas.
+ 
+\end_layout
+
+\begin_layout Standard
+Pour l'étude de la vitesse maximale,
+ le même type de test était utilisé:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+print(v_max)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Quelques problèmes s'étaient présentés:
+ D'abord,
+ lors de la vérification,
+ les premières vitesses maximales de la liste affichées étaient négatives.
+ Il s'est révelé que c'était parce qu'il n'y avait pas de 
+\begin_inset Quotes eld
+\end_inset
+
+sol
+\begin_inset Quotes erd
+\end_inset
+
+ dans la simulation.
+ Alors,
+ si la fusée avait un débit de masse insuffisant pour créer assez de poussée pour décoller,
+ elle 
+\begin_inset Quotes eld
+\end_inset
+
+tombait
+\begin_inset Quotes erd
+\end_inset
+
+ à cause de la pesanteur.
+ Alors,
+ un 
+\begin_inset Quotes eld
+\end_inset
+
+sol
+\begin_inset Quotes erd
+\end_inset
+
+ a été introduit dans le code:
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+\size small
+\color violet
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+# gestion du sol (pour éviter les vitesses négatives) si la poussée < la pesanteur
+\end_layout
+
+\begin_layout Plain Layout
+
+if y <= 0:
+\end_layout
+
+\begin_layout Plain Layout
+
+    # si on est au sol (ou en dessous)
+\end_layout
+
+\begin_layout Plain Layout
+
+    if v_y < 0:
+\end_layout
+
+\begin_layout Plain Layout
+
+        # et si la vitesse va vers le bas
+\end_layout
+
+\begin_layout Plain Layout
+
+        v_y = 0 #le sol nous bloque
+\end_layout
+
+\begin_layout Plain Layout
+
+        y = 0  # on n'a pas décollé
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Grâce à cela,
+ les premières vitesses maximales sont nulles jusqu'à avoir assez de poussée pour commencer à croître.
+ 
+\end_layout
+
+\begin_layout Standard
+Dans un deuxième temps,
+ le graphique prenait une allure assez étrange:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename figures/oscillationsDM.png
+	scale 50
+
+\end_inset
+
+ Cet effet 
+\begin_inset Quotes eld
+\end_inset
+
+dents de scie
+\begin_inset Quotes erd
+\end_inset
+
+ était crée par le pas de temps énorme (1s) choisi.
+ La méthode d'Euler suppose que l'accélération est constante pendant ces 2 secondes,
+ ce qui est une approximation.
+ De plus,
+ à chaque répétition du code,
+ les erreurs s'accumulent,
+ ce qui peut expliquer beaucoup d'imprécision vers la fin du graphique.
+ Pour amméliorer la précision,
+ le pas de temps à été changé pour 0.02s,
+ qui était la plus petite valeur pour laquelle le code tournait.
+\end_layout
+
+\begin_layout Section
+Etape 2
+\end_layout
+
+\begin_layout Standard
+Pour réaliser cette étape,
+ nous prendrons en compte le fait qu'une fusée a plusieurs étages.
+ En effet,
+ à un seul étage,
+ il est impossible de lutter contre l'attraction terrestre.
+ Il n'existe pas de moteur assez puissant,
+ alors en larguant un à un ses étages,
+ la fusée s'allège.
+ Cela lui permet d'atteindre la vitesse minimale pour quitter l'attraction terrestre:
+ 40'000 km/h.
+ Il faut également prendre un compte le changement dans la force gravitationelle,
+ puisqu'elle dépend de la distance à un corps (ici,
+ la Terre),
+ l'éloignement de la fusée aura un effet dessus.
+\end_layout
+
+\begin_layout Subsection
+Théorie
+\end_layout
+
+\begin_layout Standard
+L'abandon d'étages reprend la théorie de l'étape 1 et sera implémenté dans le code.
+ Voici la loi universelle de la gravitation:
+\end_layout
+
+\begin_layout Standard
+
+\size larger
+\begin_inset Formula $F=G\frac{m_{1}m_{2}}{r^{2}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+—
+—
+—
+—
+
+\end_layout
+
+\begin_layout Standard
+Légende:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $F$
+\end_inset
+
+= force
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $G$
+\end_inset
+
+= constante gravitationelle 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $m_{1}$
+\end_inset
+
+= masse de l'objet 1
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $m_{2}$
+\end_inset
+
+= masse de l'objet 2
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $r$
+\end_inset
+
+= distance entre le centre des deux masses
+\end_layout
+
+\end_body
+\end_document
