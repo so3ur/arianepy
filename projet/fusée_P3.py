@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import math
 
-
+# PART 3 LETSGOOO
 # Paramètres du mouvement:
 t0 = 0  # Temps initial (s)
 dt = 2  # Pas de temps (s)
@@ -25,16 +25,18 @@ ve4 = 4560
 x0 = 0
 v0_x = 0  # Vitesse initiale (m/s)
 g0 = 9.81
-p = 1 # masse volumique (kg/m³)
+p0 = 1.225 # masse volumique (kg/m³) - NIVEAU MER
 Cd = 0.1 # coefficient de traînée
 Cl = 0.1 # coeff. portée
 A = 10
 Ox0 = 0
 Oy0 = 1
-rT = 6371000 # rayon de la terre (m)
+rT = 6371000 # Rayon de la terre (m)
 G = 0.0000000000667 #Nm²/Kg² 
-M = 5972000000000000000000000 # masse de la terre (kg)
-
+M = 5972000000000000000000000 # Masse de la terre (kg)
+R = 8.314       # Constante des gaz parfaits (J/(mol·K))
+Tmoy = 288.15      # Température moyenne (K) ~15°C
+Mmo = 0.02896     # Masse molaire de l'air (kg/mol)
 
 # Initialisation des listes
 temps = []
@@ -57,24 +59,21 @@ Ox = Ox0
 Oy = Oy0
 mf = 0
 g = g0
-
+p = p0
 
 
 
 # fonction étage en fonction de la masse finale, la masse, et le débit de masse
 def etage(mf, m, dm, ve):
 
-    global v_y , t , dt , Ly , ve_y , Dy , y , x ,  Cd , Cl , v_x , ve_x , g , A , al , p , Oy , Ox , d , g , G , M , Lx , Dx , rT 
+    global v_y , t , dt , Ly , ve_y , Dy , y , x ,  Cd , Cl , v_x , ve_x , g , A , al , p , Oy , Ox , d , g , G , M , Lx , Dx , rT , Hs , R , Mmo , Tmoy
     # Méthode d'Euler pour calculer la vitesse et la position
     while y >= 0 and m > mf:
         
-
-
         t = t + dt 
-      
-
         y = v_y*dt + y
-      
+        Hs = (R * Tmoy) / (Mmo * g)
+        p = p0 * math.exp(-y / Hs)
         # x = x + v_x*dt
        
         L = (Cl*p*(v_x*v_x*+v_y*v_y)*A)/2

@@ -97,7 +97,7 @@ def etage(mf, m, dm, ve):
 
         m = m - dm*dt # masse 
         g = (G*M)/(d*d) # nouveau g 
-        print(y)
+        print(g)
        
         
         temps.append(t)
