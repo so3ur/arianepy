@@ -81,7 +81,7 @@ def etage(mf, m, dm, ve):
 
         if not (v_x == 0 and v_y== 0):
             Oy = v_y/math.sqrt(v_x*v_x+v_y*v_y)
-            print(Oy)
+            # print(Oy)
             Ox = v_x/math.sqrt(v_x*v_x+v_y*v_y)
 
         Lx = L*Oy
