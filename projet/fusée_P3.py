@@ -6,7 +6,7 @@ import math
 # PART 3 LETSGOOO
 # Paramètres du mouvement:
 t0 = 0  # Temps initial (s)
-dt = 2  # Pas de temps (s)
+dt = 0.002  # Pas de temps (s)
 y0 = 0
 v0_y = 0  #   Vitesse initiale (m/s)
 m01 = 530000 # masse initiale
@@ -35,7 +35,7 @@ rT = 6371000 # Rayon de la terre (m)
 G = 0.0000000000667 #Nm²/Kg² 
 M = 5972000000000000000000000 # Masse de la terre (kg)
 R = 8.314       # Constante des gaz parfaits (J/(mol·K))
-Tmoy = 288.15      # Température moyenne (K) ~15°C
+tempDepart = 288.15      # Température moyenne (K) ~15°C 
 Mmo = 0.02896     # Masse molaire de l'air (kg/mol)
 
 # Initialisation des listes
@@ -66,16 +66,21 @@ p = p0
 # fonction étage en fonction de la masse finale, la masse, et le débit de masse
 def etage(mf, m, dm, ve):
 
-    global v_y , t , dt , Ly , ve_y , Dy , y , x ,  Cd , Cl , v_x , ve_x , g , A , al , p , Oy , Ox , d , g , G , M , Lx , Dx , rT , Hs , R , Mmo , Tmoy
-    # Méthode d'Euler pour calculer la vitesse et la position
+    global v_y , t , dt , Ly , ve_y , Dy , y , x ,  Cd , Cl , v_x , ve_x , g , A , al , p , Oy , Ox , d , g , G , M , Lx , Dx , rT , Hs , R , Mmo , Tmoy 
+    # méthode d'Euler pour calculer la vitesse et la position
     while y >= 0 and m > mf:
         
         t = t + dt 
         y = v_y*dt + y
-        Hs = (R * Tmoy) / (Mmo * g)
-        p = p0 * math.exp(-y / Hs)
+        
+        # temp. de l'air en fonction de la hauteur. tous les 100m, on perd 0.65K
+        Temp = tempDepart - y*(0.0065)
+            
+        # pression atmospherique:
+        Hs = (R * Temp) / (Mmo * g)
+        p = p0 * math.exp(- y / Hs)
         # x = x + v_x*dt
-       
+        # print(p)
         L = (Cl*p*(v_x*v_x*+v_y*v_y)*A)/2
         D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2 #traînée, pas projetée
 
@@ -93,7 +98,7 @@ def etage(mf, m, dm, ve):
         ve_y = (-ve*Oy) + v_y
         v_y = ((-m*g*dt - dm*dt*ve_y + m*v_y) + Ly*dt + Dy*dt) / (m - dm*dt)
 
-        d = rT + y # distance au centre (rayon terre + hauteur fusée)
+        d = rT + y # distance au centre de la terre (rayon terre + hauteur fusée)
 
         m = m - dm*dt # masse 
         g = (G*M)/(d*d) # nouveau g 
@@ -101,8 +106,7 @@ def etage(mf, m, dm, ve):
        
         
         temps.append(t)
-        # vitesse_y.append(v_y)
-        # position_y.append(y)
+    
 
         
         position_y.append(y)
@@ -110,7 +114,8 @@ def etage(mf, m, dm, ve):
         vitesse_x.append(v_x)
         position_x.append(x)
         
-        
+        #print(round(y))
+        #print(Tmoy)
 
 
 # si la masse > que la 1e masse finale, 1er étage
@@ -141,7 +146,7 @@ while y >= 0:
     v_y = ((-mf2*g*dt + mf2*v_y) + Ly*dt + Dy*dt) / (mf2)
     y = v_y*dt + y
     t = t + dt 
-    print(v_y)
+    # print(v_y)
     temps.append(t)
     position_y.append(y)
     vitesse_y.append(v_y)

@@ -48,5 +48,12 @@ gravity turn sinon cv pas quitter l'atmosphère pr se mettre en orbite
 j'ai un peu arrangé les valeurs mais à vérifier
 
 
+11.8.26
+et on fait quoi de la partie 3 mtn lol.....
+"La température diminue en moyenne de 0,65 °C par 100 mètres de différence d’altitude. Si l’air est très sec, par exemple en cas de situation anticyclonique, l’air peut même se refroidir de près de 1 °C par 100 mètres. Ce processus est lié à la pression atmosphérique, au rayonnement thermique et à la teneur en vapeur d’eau de l’air.
+(météosuisse)
 
-
+tous les 100 = tous les multiples de 100
+if y est divisible par 100
+  Tmoy = Tmoy - 0.65
+ça marche pas pcq y'a trop de décimales yo nsm

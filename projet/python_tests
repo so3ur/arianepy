@@ -1,0 +1,16 @@
+
+# tous les 100, enlever 0.65 à y. arrondir y sinon on aura jamais ce cas dans la simulation
+
+
+y = 200.16
+Tmoy = 20
+if round(y) % 100 == 0:
+    Tmoy = Tmoy - 0.65
+
+print(Tmoy)
+print("--")
+
+# non. lol
+
+# si temp baisse de 0.65C tous les 100m, tous les 1m elle baisse de 0.65/100, alors 
+# temp = tempDepart - y(m)*0.65/100
