@@ -115,8 +115,7 @@ def etage(mf, m, dm, ve):
         vitesse_x.append(v_x)
         position_x.append(x)
         
-        #print(round(y))
-        #print(Tmoy)
+        
 
 
 # si la masse > que la 1e masse finale, 1er étage
