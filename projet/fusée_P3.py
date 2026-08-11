@@ -60,21 +60,22 @@ Oy = Oy0
 mf = 0
 g = g0
 p = p0
-
+Temp = tempDepart
 
 
 # fonction étage en fonction de la masse finale, la masse, et le débit de masse
 def etage(mf, m, dm, ve):
 
-    global v_y , t , dt , Ly , ve_y , Dy , y , x ,  Cd , Cl , v_x , ve_x , g , A , al , p , Oy , Ox , d , g , G , M , Lx , Dx , rT , Hs , R , Mmo , Tmoy 
+    global v_y , t , dt , Ly , ve_y , Dy , y , x ,  Cd , Cl , v_x , ve_x , g , A , al , p , Oy , Ox , d , g , G , M , Lx , Dx , rT , Hs , R , Mmo , Tmoy , Temp , tempDepart
     # méthode d'Euler pour calculer la vitesse et la position
     while y >= 0 and m > mf:
         
         t = t + dt 
         y = v_y*dt + y
         
+        if y < 11000:
         # temp. de l'air en fonction de la hauteur. tous les 100m, on perd 0.65K
-        Temp = tempDepart - y*(0.0065)
+            Temp = tempDepart - y*(0.0065)
             
         # pression atmospherique:
         Hs = (R * Temp) / (Mmo * g)
