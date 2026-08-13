@@ -6,7 +6,7 @@ import math
 
 # Paramètres du mouvement:
 t0 = 0  # Temps initial (s)
-dt = 2  # Pas de temps (s)
+dt = 0.002  # Pas de temps (s)
 y0 = 0
 v0_y = 0  #   Vitesse initiale (m/s)
 m01 = 530000 # masse initiale
@@ -79,7 +79,7 @@ def etage(mf, m, dm, ve):
     
         L = (Cl*p*(v_x*v_x*+v_y*v_y)*A)/2
         D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2 #traînée, pas projetée
-
+        print(L)
         if not (v_x == 0 and v_y== 0):
             Oy = v_y/math.sqrt(v_x*v_x+v_y*v_y)
             Ox = v_x/math.sqrt(v_x*v_x+v_y*v_y)
@@ -93,6 +93,7 @@ def etage(mf, m, dm, ve):
         ve_y = (-ve*Oy) + v_y
         v_y = ((-m*g*dt - dm*dt*ve_y + m*v_y) + Ly*dt + Dy*dt) / (m - dm*dt)
 
+
         d = rT + y # distance au centre (rayon terre + hauteur fusée)
 
         m = m - dm*dt # masse 
@@ -103,7 +104,6 @@ def etage(mf, m, dm, ve):
         # vitesse_y.append(v_y)
         # position_y.append(y)
 
-        coeff_list.append(Cl)
         position_y.append(y)
         vitesse_y.append(v_y)
         vitesse_x.append(v_x)
@@ -112,7 +112,6 @@ def etage(mf, m, dm, ve):
         if y > h_max:
             h_max = y
         
-        hauteur_max.append(h_max)
         
 
 for Cl in list_Cl:
@@ -144,13 +143,10 @@ for Cl in list_Cl:
         v_y = ((-mf2*g*dt + mf2*v_y) + Ly*dt + Dy*dt) / (mf2)
         y = v_y*dt + y
         t = t + dt 
-        print(v_y)
         temps.append(t)
         position_y.append(y)
         vitesse_y.append(v_y)
         
-    print(Cl)
-    print(h_max)
     t = t0
     m1 = m01
     v_y = v0_y 
@@ -162,6 +158,10 @@ for Cl in list_Cl:
     Oy = Oy0
     mf = 0
     g = g0
+    
+    coeff_list.append(Cl)
+    hauteur_max.append(h_max)
+    
 
         
 

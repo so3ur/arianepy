@@ -92,7 +92,7 @@ def etage(mf, m, dm, ve):
         # ve_x = (-ve*Ox) +v_x
         ve_y = (-ve*Oy) + v_y
         v_y = ((-m*g*dt - dm*dt*ve_y + m*v_y) + Ly*dt + Dy*dt) / (m - dm*dt)
-
+      
         d = rT + y # distance au centre (rayon terre + hauteur fusée)
 
         m = m - dm*dt # masse 
