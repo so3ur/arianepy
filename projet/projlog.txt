@@ -57,3 +57,10 @@ tous les 100 = tous les multiples de 100
 if y est divisible par 100
   Tmoy = Tmoy - 0.65
 ça marche pas pcq y'a trop de décimales yo nsm
+
+13.8.26
+pression atmospherique OK
+gravity turn:
+départ vertical 0x = 0 
+0y = 1
+10-30s de 90 à 85deg
