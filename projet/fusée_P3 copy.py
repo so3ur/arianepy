@@ -63,10 +63,10 @@ p = p0
 Temp = tempDepart
 
 # programme du départ + mise en orbite:
-turnStart = 10 # secondes depuis le départ
+turnStart = 60000 # secondes depuis le départ
 turnEnd = 120 
 angleFinal = 85 #degrés depuis la verticale
-angleKick = 0.5 
+# angleKick = 0.5
 
 
 def angle(t):
@@ -85,6 +85,8 @@ def etage(mf, m, dm, ve):
         t = t + dt 
         y = v_y*dt + y
         
+
+        
         if y < 11000:
         # temp. de l'air en fonction de la hauteur. tous les 100m, on perd 0.65K
             Temp = tempDepart - y*(0.0065)
@@ -92,30 +94,37 @@ def etage(mf, m, dm, ve):
         # pression atmospherique:
         Hs = (R * Temp) / (Mmo * g)
         p = p0 * math.exp(- y / Hs)
-        # x = x + v_x*dt
+        x = x + v_x*dt
         # print(p)
         L = (Cl*p*(v_x*v_x*+v_y*v_y)*A)/2
         D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2 #traînée, pas projetée
 
-        if not (v_x == 0 and v_y== 0):
-            Oy = v_y/math.sqrt(v_x*v_x+v_y*v_y)
-            # print(Oy)
-            Ox = v_x/math.sqrt(v_x*v_x+v_y*v_y)
+        
+        if t >= turnStart: 
+            Oy = 0
+            Ox = 1 
+            print(Oy , Ox)
+        elif not (v_x == 0 and v_y== 0):
+                Oy = v_y/math.sqrt(v_x*v_x+v_y*v_y)
+                # print(Oy)
+                Ox = v_x/math.sqrt(v_x*v_x+v_y*v_y)
 
         Lx = L*Oy
         Ly = L*Ox
         Dx = -D*Ox
         Dy = -D*Oy
 
-        # ve_x = (-ve*Ox) +v_x
+        ve_x = (-ve*Ox) +v_x
         ve_y = (-ve*Oy) + v_y
         v_y = ((-m*g*dt - dm*dt*ve_y + m*v_y) + Ly*dt + Dy*dt) / (m - dm*dt)
+        v_x = ((-mf*v_x)+ Dx*dt + Lx*dt) / (mf)
 
         d = rT + y # distance au centre de la terre (rayon terre + hauteur fusée)
 
         m = m - dm*dt # masse 
         g = (G*M)/(d*d) # nouveau g 
-      
+
+        
        
         
         temps.append(t)
@@ -155,7 +164,7 @@ if m1 > mf4:
 
 print('RETOMBÉE')
 while y >= 0:
-    v_y = ((-mf2*g*dt + mf2*v_y) + Ly*dt + Dy*dt) / (mf2)
+    v_y = ((-mf4*g*dt + mf4*v_y) + Ly*dt + Dy*dt) / (mf4)
     y = v_y*dt + y
     t = t + dt 
     # print(v_y)

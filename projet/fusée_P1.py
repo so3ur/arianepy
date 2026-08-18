@@ -73,7 +73,7 @@ while y >= 0:
         v_x = ((m*v_x-dm*dt*ve_x) + Dx*dt + Lx*dt) /(m - dm*dt) 
     else: #dm*dt = 0
             v_y = ((-mf*g*dt + mf*v_y) + Ly*dt + Dy*dt) / (mf)
-            v_x = ((-mf*v_x)+ Dx*dt + Lx*dt) / (mf)
+            # v_x = ((-mf*v_x)+ Dx*dt + Lx*dt) / (mf)
     print(y)
 
   
