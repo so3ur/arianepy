@@ -8,7 +8,7 @@ import math
 t0 = 0  # Temps initial (s)
 dt = 2  # Pas de temps (s)
 y0 = 0
-v0_y = 0  #   Vitesse initiale (m/s)
+v0_y = 0  #   vitesse initiale (m/s)
 m01 = 530000 # masse initiale
 mf1 = 190000 # masse finale
 mf2 = 36000  # 2e etage tout seul fait 31000kg

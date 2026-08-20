@@ -87,7 +87,7 @@ def etage(mf, m, dm, ve):
 
         if not (v_x == 0 and v_y== 0):
             Oy = v_y/math.sqrt(v_x*v_x+v_y*v_y)
-            # print(Oy)
+            
             Ox = v_x/math.sqrt(v_x*v_x+v_y*v_y)
 
         Lx = L*Oy
@@ -164,7 +164,7 @@ while y >= 0:
 plt.figure(figsize=(10, 6))
 # Courbe de la vitesse (axe y)
 plt.subplot(1, 1, 1)
-plt.plot(temps, position_y, label="hauteur(m)", color="purple")
+plt.plot(temps,position_y , label="hauteur(m)", color="purple")
 plt.title("hauteur en fonction du temps (Méthode d'Euler) ")
 plt.xlabel("Temps (s)")
 plt.ylabel("Hauteur (m)")

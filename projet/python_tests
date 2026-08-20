@@ -10,7 +10,7 @@ if round(y) % 100 == 0:
 print(Tmoy)
 print("--")
 
-# non. lol
+# non 
 
 # si temp baisse de 0.65C tous les 100m, tous les 1m elle baisse de 0.65/100, alors 
-# temp = tempDepart - y(m)*0.65/100
+temp = tempDepart - y(m)*0.65/100

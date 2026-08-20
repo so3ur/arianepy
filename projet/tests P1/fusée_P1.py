@@ -8,7 +8,7 @@ import math
 t0 = 0  # Temps initial (s)
 dt = 0.05  # Pas de temps (s)
 y0 = 0
-v0_y = 0  # Vitesse initiale (m/s)
+v0_y = 0  # vitesse initiale (m/s)
 m0 = 530000 # masse initiale
 mf = 530000 - 170000 # masse finale
 dm = 1600 # débit de masse

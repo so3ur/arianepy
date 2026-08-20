@@ -44,7 +44,7 @@ vitesse_y = []
 position_y = []
 vitesse_x = []
 position_x = []
-
+orientation_x = []
 
 
 # Conditions initiales
@@ -63,8 +63,9 @@ p = p0
 Temp = tempDepart
 
 # programme du départ + mise en orbite:
-turnStart = 60000 # secondes depuis le départ
-turnEnd = 120 
+turnStart = 300 # secondes depuis le départ
+turnMid = 400 # secondes
+turnEnd = 500 # secondes
 angleFinal = 85 #degrés depuis la verticale
 # angleKick = 0.5
 
@@ -100,10 +101,16 @@ def etage(mf, m, dm, ve):
         D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2 #traînée, pas projetée
 
         
-        if t >= turnStart: 
-            Oy = 0
-            Ox = 1 
-            print(Oy , Ox)
+        if v_y == math.sqrt(g*(y+rT)): 
+            Oy = math.sin(math.radians(90))
+            Ox = math.cos(math.radians(90))
+        # elif t >= turnMid: 
+        #     Oy = math.sin(math.radians(60))
+        #     Ox = math.cos(math.radians(60))
+        # elif t >= turnEnd:
+        #     Oy = math.sin(math.radians(90))
+        #     Ox = math.coa(math.radians(90))
+   
         elif not (v_x == 0 and v_y== 0):
                 Oy = v_y/math.sqrt(v_x*v_x+v_y*v_y)
                 # print(Oy)
@@ -135,7 +142,7 @@ def etage(mf, m, dm, ve):
         vitesse_y.append(v_y)
         vitesse_x.append(v_x)
         position_x.append(x)
-        
+        orientation_x.append(Ox)
         
 
 
@@ -162,17 +169,17 @@ if m1 > mf4:
     # m1 = m1 - 4000
     etage(mf4, m1, dm4 , ve4)
 
-print('RETOMBÉE')
-while y >= 0:
-    v_y = ((-mf4*g*dt + mf4*v_y) + Ly*dt + Dy*dt) / (mf4)
-    y = v_y*dt + y
-    t = t + dt 
-    # print(v_y)
-    temps.append(t)
-    position_y.append(y)
-    vitesse_y.append(v_y)
+# print('RETOMBÉE')
+# while y >= 0:
+#     v_y = ((-mf4*g*dt + mf4*v_y) + Ly*dt + Dy*dt) / (mf4)
+#     y = v_y*dt + y
+#     t = t + dt 
+#     # print(v_y)
+#     temps.append(t)
+#     position_y.append(y)
+#     vitesse_y.append(v_y)
     
-
+print("fin")
 
 
 
@@ -186,6 +193,7 @@ plt.figure(figsize=(10, 6))
 # Courbe de la vitesse (axe y)
 plt.subplot(1, 1, 1)
 plt.plot(temps, position_y, label="hauteur(m)", color="purple")
+plt.plot(temps, orientation_x)
 plt.title("hauteur en fonction du temps (Méthode d'Euler) ")
 plt.xlabel("Temps (s)")
 plt.ylabel("Hauteur (m)")
