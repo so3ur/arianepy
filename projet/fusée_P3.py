@@ -6,7 +6,7 @@ import math
 # PART 3 LETSGOOO
 # Paramètres du mouvement:
 t0 = 0  # Temps initial (s)
-dt = 0.002  # Pas de temps (s)
+dt = 0.2  # Pas de temps (s)
 y0 = 0
 v0_y = 0  #   Vitesse initiale (m/s)
 m01 = 530000 # masse initiale
@@ -57,7 +57,7 @@ v_x = v0_x
 x = x0
 Ox = Ox0 
 Oy = Oy0
-mf = 0
+mf = mf1
 g = g0
 p = p0
 Temp = tempDepart
@@ -100,11 +100,9 @@ def etage(mf, m, dm, ve):
         v_y = ((-m*g*dt - dm*dt*ve_y + m*v_y) + Ly*dt + Dy*dt) / (m - dm*dt)
 
         d = rT + y # distance au centre de la terre (rayon terre + hauteur fusée)
-
+        
         m = m - dm*dt # masse 
         g = (G*M)/(d*d) # nouveau g 
-      
-       
         
         temps.append(t)
     
@@ -114,6 +112,8 @@ def etage(mf, m, dm, ve):
         vitesse_y.append(v_y)
         vitesse_x.append(v_x)
         position_x.append(x)
+        
+    return(m)
         
         
 
@@ -127,26 +127,32 @@ print("FIN ETAGE 1")
 
 # si la masse > que la 2e masse finale, 2e etage
 if m1 >= mf2:
+    m1 = etage(mf1, m1, dm1, ve1)
     m1 = m1 - 23000 # moins le poids de l'étage largué 
+
     etage(mf2 , m1, dm2 , ve2)
 
 print('FIN ETAGE 2')
+
 # si la masse > que la 3e masse finale, 3e etage
 if m1 >= mf3:
+    m1 = etage(mf2, m1, dm2, ve2)
     m1 = m1 - 14000
     etage(mf3, m1, dm3 , ve3) 
 
 print('FIN ETAGE 3')
+
 if m1 > mf4:
-    # m1 = m1 - 4000
+    m1 = etage(mf3, m1, dm3, ve3)
+
     etage(mf4, m1, dm4 , ve4)
 
 print('RETOMBÉE')
+
 while y >= 0:
-    v_y = ((-mf2*g*dt + mf2*v_y) + Ly*dt + Dy*dt) / (mf2)
+    v_y = ((-m1*g*dt + m1*v_y) + Ly*dt + Dy*dt) / (m1)
     y = v_y*dt + y
     t = t + dt 
-    # print(v_y)
     temps.append(t)
     position_y.append(y)
     vitesse_y.append(v_y)

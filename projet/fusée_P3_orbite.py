@@ -104,13 +104,7 @@ def etage(mf, m, dm, ve):
         if v_y == math.sqrt(g*(y+rT)): 
             Oy = math.sin(math.radians(90))
             Ox = math.cos(math.radians(90))
-        # elif t >= turnMid: 
-        #     Oy = math.sin(math.radians(60))
-        #     Ox = math.cos(math.radians(60))
-        # elif t >= turnEnd:
-        #     Oy = math.sin(math.radians(90))
-        #     Ox = math.coa(math.radians(90))
-   
+
         elif not (v_x == 0 and v_y== 0):
                 Oy = v_y/math.sqrt(v_x*v_x+v_y*v_y)
                 # print(Oy)
@@ -144,6 +138,8 @@ def etage(mf, m, dm, ve):
         position_x.append(x)
         orientation_x.append(Ox)
         
+    print(m)
+        
 
 
 # si la masse > que la 1e masse finale, 1er étage
@@ -155,8 +151,10 @@ print("FIN ETAGE 1")
 
 # si la masse > que la 2e masse finale, 2e etage
 if m1 >= mf2:
+    
     m1 = m1 - 23000 # moins le poids de l'étage largué 
     etage(mf2 , m1, dm2 , ve2)
+    
 
 print('FIN ETAGE 2')
 # si la masse > que la 3e masse finale, 3e etage
