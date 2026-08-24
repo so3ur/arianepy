@@ -120,39 +120,51 @@ def etage(mf, m, dm, ve):
 
 # si la masse > que la 1e masse finale, 1er étage
 if m1 >= mf1:
-    etage(mf1 , m1 , dm1 , ve1)
+    print(m1)
+    m1=etage(mf1 , m1 , dm1 , ve1)
+    print(m1)
 
 
 print("FIN ETAGE 1")
 
 # si la masse > que la 2e masse finale, 2e etage
 if m1 >= mf2:
-    m1 = etage(mf1, m1, dm1, ve1)
+   # m1 = etage(mf1, m1, dm1, ve1)
     m1 = m1 - 23000 # moins le poids de l'étage largué 
 
-    etage(mf2 , m1, dm2 , ve2)
+    m1=etage(mf2 , m1, dm2 , ve2)
 
 print('FIN ETAGE 2')
 
 # si la masse > que la 3e masse finale, 3e etage
 if m1 >= mf3:
-    m1 = etage(mf2, m1, dm2, ve2)
+   # m1 = etage(mf2, m1, dm2, ve2)
     m1 = m1 - 14000
-    etage(mf3, m1, dm3 , ve3) 
+    m1=etage(mf3, m1, dm3 , ve3) 
 
 print('FIN ETAGE 3')
 
 if m1 > mf4:
-    m1 = etage(mf3, m1, dm3, ve3)
+    #m1 = etage(mf3, m1, dm3, ve3)
 
-    etage(mf4, m1, dm4 , ve4)
+    m1=etage(mf4, m1, dm4 , ve4)
 
 print('RETOMBÉE')
 
 while y >= 0:
+    # L = (Cl*p*(v_x*v_x*+v_y*v_y)*A)/2
+    # D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2
+    # Ly = L*Ox
+    # Dy = -D*Oy
+    # Hs = (R * Temp) / (Mmo * g)
+    # p = p0 * math.exp(- y / Hs)
     v_y = ((-m1*g*dt + m1*v_y) + Ly*dt + Dy*dt) / (m1)
     y = v_y*dt + y
     t = t + dt 
+    d = rT + y
+    g = (G*M)/(d*d)
+    
+    
     temps.append(t)
     position_y.append(y)
     vitesse_y.append(v_y)
