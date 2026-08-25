@@ -1,3 +1,4 @@
+
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -6,19 +7,19 @@ import math
 
 # Paramètres du mouvement:
 t0 = 0  # Temps initial (s)
-dt = 2  # Pas de temps (s)
+dt = 0.2  # Pas de temps (s)
 y0 = 0
 v0_y = 0  #   Vitesse initiale (m/s)
-m01 = 530000 # masse initiale
-mf1 = 190000 # masse finale
-mf2 = 36000  # 2e etage tout seul fait 31000kg
-mf3 = 33500 # 3e masse finale
+m01 = 860000 # masse initiale
+mf1 = 165000 # masse finale
+mf2 = 34000  # 2e etage tout seul fait 31000kg
+mf3 = 18000 # 3e masse finale
 mf4 = 4000
-dm1 = 2260 # débit de masse 1er étage
-dm2 = 735 # débit de masse 2e étage
-dm3 = 40
+dm1 = 3800 # débit de masse 1er étage
+dm2 = 750 # débit de masse 2e étage
+dm3 = 45
 dm4 = 11
-ve1 = 2710 # vitesse d'éjection du carburant (m/s)
+ve1 = 2800 # vitesse d'éjection du carburant (m/s)
 ve2 = 4220
 ve3 = 4560
 ve4 = 4560
@@ -130,7 +131,7 @@ print("FIN ETAGE 1")
 # si la masse > que la 2e masse finale, 2e etage
 if m1 >= mf2:
    # m1 = etage(mf1, m1, dm1, ve1)
-    m1 = m1 - 23000 # moins le poids de l'étage largué 
+    m1 = m1 - 35000 # moins le poids de l'étage largué 
 
     m1=etage(mf2 , m1, dm2 , ve2)
 
@@ -139,7 +140,7 @@ print('FIN ETAGE 2')
 # si la masse > que la 3e masse finale, 3e etage
 if m1 >= mf3:
    # m1 = etage(mf2, m1, dm2, ve2)
-    m1 = m1 - 14000
+    m1 = m1 - 8000
     m1=etage(mf3, m1, dm3 , ve3) 
 
 print('FIN ETAGE 3')
@@ -169,7 +170,7 @@ while y >= 0:
     vitesse_y.append(v_y)
     
 
-
+print('Fin!')
 
 
 
@@ -189,4 +190,3 @@ plt.grid(True)
 plt.legend()
 
 plt.show()
-
