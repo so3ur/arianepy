@@ -6,7 +6,7 @@ import math
 # PART 3 LETSGOOO
 # Paramètres du mouvement:
 t0 = 0  # Temps initial (s)
-dt = 0.2  # Pas de temps (s)
+dt = 2  # Pas de temps (s)
 y0 = 0
 v0_y = 0  #   Vitesse initiale (m/s)
 m01 = 530000 # masse initiale
@@ -152,18 +152,17 @@ if m1 > mf4:
 print('RETOMBÉE')
 
 while y >= 0:
-    # L = (Cl*p*(v_x*v_x*+v_y*v_y)*A)/2
-    # D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2
-    # Ly = L*Ox
-    # Dy = -D*Oy
-    # Hs = (R * Temp) / (Mmo * g)
-    # p = p0 * math.exp(- y / Hs)
+    L = (Cl*p*(v_x*v_x*+v_y*v_y)*A)/2
+    D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2
+    Ly = L*Ox
+    Dy = -D*Oy
+    Hs = (R * Temp) / (Mmo * g)
+    p = p0 * math.exp(- y / Hs)
     v_y = ((-m1*g*dt + m1*v_y) + Ly*dt + Dy*dt) / (m1)
     y = v_y*dt + y
     t = t + dt 
     d = rT + y
-    g = (G*M)/(d*d)
-    
+    g = (G*M)/(y*y) 
     
     temps.append(t)
     position_y.append(y)
