@@ -8,8 +8,9 @@ import numpy as np
 # Paramètres du mouvement:
 t0 = 0  # Temps initial (s)
 dt = 0.002  # Pas de temps (s)
-y0 = 0
-v0_y = 1  #   Vitesse initiale (m/s)
+rT = 6371000 # Rayon de la terre (m)
+y0 = 6371000
+v0_y = 0  #   Vitesse initiale (m/s)
 m01 = 860000 # masse initiale
 mf1 = 165000 # masse finale
 mf2 = 34000  # 2e etage tout seul fait 31000kg
@@ -24,7 +25,7 @@ ve2 = 4220
 ve3 = 4560
 ve4 = 4560
 x0 = 0
-v0_x = 1000  # Vitesse initiale (m/s)
+v0_x = 0  # Vitesse initiale (m/s)
 g0 = 9.81
 p0 = 1.225 # masse volumique (kg/m³) - NIVEAU MER
 Cd = 0.1 # coefficient de traînée
@@ -32,7 +33,6 @@ Cl = 0.1 # coeff. portée
 A = 10
 Ox0 = 2.65 * (10**(-4))
 Oy0 = math.sqrt(1-Ox0**2)
-rT = 6371000 # Rayon de la terre (m)
 G = 0.0000000000667 #Nm²/Kg² 
 M = 5972000000000000000000000 # Masse de la terre (kg)
 R = 8.314       # Constante des gaz parfaits (J/(mol·K))
@@ -83,27 +83,35 @@ def etage(mf, m, dm, ve):
         # pression atmospherique:
         Hs = (R * Temp) / (Mmo * g)
         p = p0 * math.exp(- y / Hs)
+
+        # Gradually pitch from vertical toward horizontal.
+        pitch = min(math.radians(85), math.radians(0.5) * t)
+        Ox0 = math.sin(pitch)
+        Oy0 = math.cos(pitch)
         
 
-        L = (Cl*p*(v_x*v_x*+v_y*v_y)*A)/2
+        speed = math.hypot(v_x, v_y)
+        if speed > 0:
+            ux = v_x / speed
+            uy = v_y / speed
+        else:
+            ux = 0
+            uy = 0
+
+        L = (Cl*p*speed**2*A)/2
         D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2 #traînée, pas projetée
 
+        # Aerodynamic forces use the direction of the current velocity.
+        Lx = -L*uy
+        Ly = L*ux
+        Dx = -D*ux
+        Dy = -D*uy
 
-        
-        # if not (v_x == 0 and v_y== 0):
-
-        Oy = v_y/math.hypot(v_x , v_y)
-        Ox = v_x/math.hypot(v_x , v_y)
-
-        Lx = L*Oy
-        Ly = L*Ox
-        Dx = -D*Ox
-        Dy = -D*Oy
-
-        ve_x = (-ve*Ox) +v_x
-        ve_y = (-ve*Oy) + v_y
+        # Thrust direction is separate from velocity direction.
+        ve_x = (-ve*Ox0) + v_x
+        ve_y = (-ve*Oy0) + v_y
         v_y = ((-m*g*dt - dm*dt*ve_y + m*v_y) + Ly*dt + Dy*dt) / (m - dm*dt)
-        v_x = ((-m*v_x -dm*dt*ve_x)+ Dx*dt + Lx*dt) / (m - dm*dt)
+        v_x = ((m*v_x -dm*dt*ve_x)+ Dx*dt + Lx*dt) / (m - dm*dt)
         d = rT + y # distance au centre de la terre (rayon terre + hauteur fusée)
         
         print(v_x)
@@ -129,9 +137,8 @@ def etage(mf, m, dm, ve):
 
 # si la masse > que la 1e masse finale, 1er étage
 if m1 >= mf1:
-    print(m1)
     m1=etage(mf1 , m1 , dm1 , ve1)
-    print(m1)
+
 
 
 print("FIN ETAGE 1")
