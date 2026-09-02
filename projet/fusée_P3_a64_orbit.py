@@ -30,7 +30,7 @@ p0 = 1.225 # masse volumique (kg/m³) - NIVEAU MER
 Cd = 0.1 # coefficient de traînée
 Cl = 0.1 # coeff. portée
 A = 10
-Ox0 = 0
+Ox0 = 2.65 *10**(-4)
 Oy0 = 1
 rT = 6371000 # Rayon de la terre (m)
 G = 0.0000000000667 #Nm²/Kg² 
@@ -73,6 +73,7 @@ def etage(mf, m, dm, ve):
         
         t = t + dt 
         y = v_y*dt + y
+        x = x + v_x*dt 
         
         if y < 11000:
         # temp. de l'air en fonction de la hauteur. tous les 100m, on perd 0.65K
@@ -81,22 +82,22 @@ def etage(mf, m, dm, ve):
         # pression atmospherique:
         Hs = (R * Temp) / (Mmo * g)
         p = p0 * math.exp(- y / Hs)
-        # x = x + v_x*dt
-        # print(p)
-        L = (Cl*p*(v_x*v_x*+v_y*v_y)*A)/2
+        
+
+        L = (Cl*p*(v_x*v_x + v_y*v_y)*A)/2
         D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2 #traînée, pas projetée
 
         if not (v_x == 0 and v_y== 0):
-            Oy = v_y/math.sqrt(v_x*v_x+v_y*v_y)
+            Oy = v_y/math.sqrt(v_x*v_x + v_y*v_y)
             
-            Ox = v_x/math.sqrt(v_x*v_x+v_y*v_y)
+            Ox = v_x/math.sqrt(v_x*v_x + v_y*v_y)
 
         Lx = L*Oy
         Ly = L*Ox
         Dx = -D*Ox
         Dy = -D*Oy
 
-        # ve_x = (-ve*Ox) +v_x
+        ve_x = (-ve*Ox) + v_x
         ve_y = (-ve*Oy) + v_y
         v_y = ((-m*g*dt - dm*dt*ve_y + m*v_y) + Ly*dt + Dy*dt) / (m - dm*dt)
         
@@ -118,39 +119,35 @@ def etage(mf, m, dm, ve):
         
         
 
+while t < 300:
 
 # si la masse > que la 1e masse finale, 1er étage
-if m1 >= mf1:
-    print(m1)
-    m1=etage(mf1 , m1 , dm1 , ve1)
-    print(m1)
+    if m1 >= mf1:
+        print(m1)
+        m1=etage(mf1 , m1 , dm1 , ve1)
+        print(m1)
 
 
-print("FIN ETAGE 1")
+    print("FIN ETAGE 1")
 
 # si la masse > que la 2e masse finale, 2e etage
-if m1 >= mf2:
-   # m1 = etage(mf1, m1, dm1, ve1)
-    m1 = m1 - 35000 # moins le poids de l'étage largué 
+    if m1 >= mf2:
+        m1 = m1 - 35000 # moins le poids de l'étage largué 
+        m1=etage(mf2 , m1, dm2 , ve2)
 
-    m1=etage(mf2 , m1, dm2 , ve2)
-
-print('FIN ETAGE 2')
+    print('FIN ETAGE 2')
 
 # si la masse > que la 3e masse finale, 3e etage
-if m1 >= mf3:
-   # m1 = etage(mf2, m1, dm2, ve2)
-    m1 = m1 - 8000
-    m1=etage(mf3, m1, dm3 , ve3) 
+    if m1 >= mf3:
+        m1 = m1 - 8000
+        m1=etage(mf3, m1, dm3 , ve3) 
 
-print('FIN ETAGE 3')
+    print('FIN ETAGE 3')
 
-if m1 > mf4:
-    #m1 = etage(mf3, m1, dm3, ve3)
+    if m1 > mf4:
+        m1=etage(mf4, m1, dm4 , ve4)
 
-    m1=etage(mf4, m1, dm4 , ve4)
-
-print('RETOMBÉE')
+    print('RETOMBÉE:')
 
 while y >= 0:
     L = (Cl*p*(v_x*v_x*+v_y*v_y)*A)/2
