@@ -150,7 +150,7 @@ while t < 300:
     print('RETOMBÉE:')
 
 while y >= 0:
-    L = (Cl*p*(v_x*v_x*+v_y*v_y)*A)/2
+    L = (Cl*p*(v_x*v_x+v_y*v_y)*A)/2
     D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2
     Ly = L*Ox
     Dy = -D*Oy
