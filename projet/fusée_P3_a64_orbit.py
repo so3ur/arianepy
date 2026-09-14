@@ -3,12 +3,13 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import math
+import numpy as np
 
 
 # Paramètres du mouvement:
 t0 = 0  # Temps initial (s)
-dt = 0.1  # Pas de temps (s)
-y0 = 0
+dt = 0.002  # Pas de temps (s)
+y0 = 6371000
 v0_y = 0  #   Vitesse initiale (m/s)
 m01 = 860000 # masse initiale
 mf1 = 165000 # masse finale
@@ -62,12 +63,16 @@ mf = mf1
 g = g0
 p = p0
 Temp = tempDepart
+Lx = 0
+Ly = 0
+Dx = 0
+Dy = 0
 
 
 # fonction étage en fonction de la masse finale, la masse, et le débit de masse
 def etage(mf, m, dm, ve):
 
-    global v_y , t , dt , Ly , ve_y , Dy , y , x ,  Cd , Cl , v_x , ve_x , g , A , al , p , Oy , Ox , d , g , G , M , Lx , Dx , rT , Hs , R , Mmo , Tmoy , Temp , tempDepart
+    global v_y , t , dt , Ly , ve_y , Dy , y , x ,  Cd , Cl , v_x , ve_x , g , A , al , p , Oy , Ox , d , g , G , M , Lx , Dx , rT , Hs , R , Mmo , Tmoy , Temp , tempDepart, Ly, Lx 
     # méthode d'Euler pour calculer la vitesse et la position
     while y >= 0 and m > mf:
         
@@ -87,7 +92,7 @@ def etage(mf, m, dm, ve):
         L = (Cl*p*(v_x*v_x + v_y*v_y)*A)/2
         D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2 #traînée, pas projetée
 
-        if not (v_x == 0 and v_y== 0):
+        if not (v_y == 0 and v_x == 0):
             Oy = v_y/math.sqrt(v_x*v_x + v_y*v_y)
             
             Ox = v_x/math.sqrt(v_x*v_x + v_y*v_y)
@@ -100,6 +105,7 @@ def etage(mf, m, dm, ve):
         ve_x = (-ve*Ox) + v_x
         ve_y = (-ve*Oy) + v_y
         v_y = ((-m*g*dt - dm*dt*ve_y + m*v_y) + Ly*dt + Dy*dt) / (m - dm*dt)
+        v_x = ((m * v_x - dm * dt * ve_x) + Dx * dt + Lx * dt) / (m - dm * dt)
         
         d = rT + y # distance au centre de la terre (rayon terre + hauteur fusée)
         
@@ -109,7 +115,7 @@ def etage(mf, m, dm, ve):
         temps.append(t)
     
 
-        
+        print(y)
         position_y.append(y)
         vitesse_y.append(v_y)
         vitesse_x.append(v_x)
@@ -119,39 +125,44 @@ def etage(mf, m, dm, ve):
         
         
 
-while t < 300:
+
 
 # si la masse > que la 1e masse finale, 1er étage
-    if m1 >= mf1:
-        print(m1)
-        m1=etage(mf1 , m1 , dm1 , ve1)
-        print(m1)
+if m1 >= mf1:
+    print(m1)
+    m1=etage(mf1 , m1 , dm1 , ve1)
+    print(m1)
 
 
-    print("FIN ETAGE 1")
+print("FIN ETAGE 1")
 
 # si la masse > que la 2e masse finale, 2e etage
-    if m1 >= mf2:
-        m1 = m1 - 35000 # moins le poids de l'étage largué 
-        m1=etage(mf2 , m1, dm2 , ve2)
+if m1 >= mf2:
+    m1 = m1 - 35000 # moins le poids de l'étage largué 
+    m1=etage(mf2 , m1, dm2 , ve2)
 
-    print('FIN ETAGE 2')
+print('FIN ETAGE 2')
 
 # si la masse > que la 3e masse finale, 3e etage
-    if m1 >= mf3:
-        m1 = m1 - 8000
-        m1=etage(mf3, m1, dm3 , ve3) 
+if m1 >= mf3:
+    m1 = m1 - 8000
+    m1=etage(mf3, m1, dm3 , ve3) 
 
-    print('FIN ETAGE 3')
+print('FIN ETAGE 3')
 
-    if m1 > mf4:
-        m1=etage(mf4, m1, dm4 , ve4)
+if m1 > mf4:
+    m1=etage(mf4, m1, dm4 , ve4)
 
     print('RETOMBÉE:')
 
-while y >= 0:
+while y >= 0 and t<30000:
     L = (Cl*p*(v_x*v_x+v_y*v_y)*A)/2
     D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2
+    
+    if not (v_x == 0 and v_y== 0):
+        Oy = v_y/math.sqrt(v_x*v_x + v_y*v_y)
+        Ox = v_x/math.sqrt(v_x*v_x + v_y*v_y)
+        
     Ly = L*Ox
     Dy = -D*Oy
     Hs = (R * Temp) / (Mmo * g)
@@ -167,25 +178,28 @@ while y >= 0:
     temps.append(t)
     position_y.append(y)
     vitesse_y.append(v_y)
+    vitesse_x.append(v_x)
+    position_x.append(x)
     
 
 print('Fin!')
 
 
 
-
-
-# graph y(t)
-
-# Tracé des courbes
-plt.figure(figsize=(10, 6))
-# Courbe de la vitesse (axe y)
-plt.subplot(1, 1, 1)
-plt.plot(temps,position_y , label="hauteur(m)", color="purple")
-plt.title("hauteur en fonction du temps (Méthode d'Euler) ")
-plt.xlabel("Temps (s)")
-plt.ylabel("Hauteur (m)")
-plt.grid(True)
-plt.legend()
-
-plt.show()
+# Cercle de rayon rT
+R=rT
+theta = np.linspace(0, 2 * np.pi, 400)
+x_cercle = R * np.cos(theta)
+y_cercle = R * np.sin(theta)
+fig, ax = plt.subplots(figsize=(6, 6))
+ax.plot(x_cercle, y_cercle, "b-", label=f"Terre")
+ax.plot(position_x , position_y, "r-", label="Trajectoire (x, y)")
+ax.set_aspect("equal")
+ax.grid(True, alpha = 0.3)
+ax.axhline(0, color="k", lw=0.5)
+ax.axvline(0, color="k", lw=0.5)
+ax.set_xlabel("x")
+ax.set_ylabel("y")
+ax.set_title("Cercle de rayon rT et points (x, y)")
+ax.legend()
+plt.show() 
