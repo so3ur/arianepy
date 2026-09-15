@@ -8,8 +8,9 @@ import numpy as np
 
 # Paramètres du mouvement:
 t0 = 0  # Temps initial (s)
-dt = 0.002  # Pas de temps (s)
+dt = 0.005  # Pas de temps (s)
 y0 = 6371000
+dsol0 = 0
 v0_y = 0  #   Vitesse initiale (m/s)
 m01 = 860000 # masse initiale
 mf1 = 165000 # masse finale
@@ -27,12 +28,14 @@ ve4 = 4560
 x0 = 0
 v0_x = 0  # Vitesse initiale (m/s)
 g0 = 9.81
+gx0 = 0
+gy0 = 0
 p0 = 1.225 # masse volumique (kg/m³) - NIVEAU MER
 Cd = 0.1 # coefficient de traînée
-Cl = 0.1 # coeff. portée
+Cl = 0 # coeff. portée
 A = 10
 Ox0 = 2.65 *10**(-4)
-Oy0 = 1
+Oy0 = math.sqrt(1-Ox0**2)
 rT = 6371000 # Rayon de la terre (m)
 G = 0.0000000000667 #Nm²/Kg² 
 M = 5972000000000000000000000 # Masse de la terre (kg)
@@ -54,13 +57,15 @@ t = t0
 m1 = m01
 v_y = v0_y 
 y = y0
-y2 = y0
+dsol = dsol0
 v_x = v0_x
 x = x0
 Ox = Ox0 
 Oy = Oy0
 mf = mf1
 g = g0
+gx = gx0
+gy = gy0
 p = p0
 Temp = tempDepart
 Lx = 0
@@ -72,21 +77,32 @@ Dy = 0
 # fonction étage en fonction de la masse finale, la masse, et le débit de masse
 def etage(mf, m, dm, ve):
 
-    global v_y , t , dt , Ly , ve_y , Dy , y , x ,  Cd , Cl , v_x , ve_x , g , A , al , p , Oy , Ox , d , g , G , M , Lx , Dx , rT , Hs , R , Mmo , Tmoy , Temp , tempDepart, Ly, Lx 
+    global v_y , t , dt , Ly , ve_y , Dy , y , x ,  Cd , Cl , v_x , ve_x , g , A , al , p , Oy , Ox , d , g , G , M , Lx , Dx , rT , Hs , R , Mmo , Tmoy , Temp , tempDepart, Ly, Lx , dsol , gx , gy
     # méthode d'Euler pour calculer la vitesse et la position
     while y >= 0 and m > mf:
-        
+    
         t = t + dt 
         y = v_y*dt + y
         x = x + v_x*dt 
-        
-        if y < 11000:
+        dsol = math.sqrt(x**2 + y**2) - rT
+        if dsol < 11000:
         # temp. de l'air en fonction de la hauteur. tous les 100m, on perd 0.65K
-            Temp = tempDepart - y*(0.0065)
+            Temp = tempDepart - dsol*(0.0065)
             
         # pression atmospherique:
         Hs = (R * Temp) / (Mmo * g)
-        p = p0 * math.exp(- y / Hs)
+        p = p0 * math.exp(- dsol / Hs)
+        
+        d = math.sqrt(x**2 + y**2) # distance au centre de la terre
+        
+        
+        g = (G*M)/(d*d) # nouveau g 
+        if dsol > 0:
+            gx = -g*(x/d)
+            gy = -g*(y/d)
+        else:
+            gx = 0
+            gy = g
         
 
         L = (Cl*p*(v_x*v_x + v_y*v_y)*A)/2
@@ -104,13 +120,12 @@ def etage(mf, m, dm, ve):
 
         ve_x = (-ve*Ox) + v_x
         ve_y = (-ve*Oy) + v_y
-        v_y = ((-m*g*dt - dm*dt*ve_y + m*v_y) + Ly*dt + Dy*dt) / (m - dm*dt)
-        v_x = ((m * v_x - dm * dt * ve_x) + Dx * dt + Lx * dt) / (m - dm * dt)
         
-        d = rT + y # distance au centre de la terre (rayon terre + hauteur fusée)
-        
-        m = m - dm*dt # masse 
-        g = (G*M)/(d*d) # nouveau g 
+        v_y = (m*v_y - dm * dt * ve_y + m*gy*dt + Ly * dt + Dy * dt) / (m - dm * dt)
+        v_x = (m * v_x - dm * dt * ve_x + m * gx * dt + Lx * dt + Dx * dt) / (m - dm * dt)
+
+        m = m - dm*dt
+    
         
         temps.append(t)
     
@@ -155,9 +170,33 @@ if m1 > mf4:
 
     print('RETOMBÉE:')
 
-while y >= 0 and t<30000:
+while t<3000:
+    
+    t = t + dt 
+    dsol = math.sqrt(x**2 + y**2) - rT
+    y = v_y*dt + y
+    x = x + v_x * dt
+    
+
+    d = math.sqrt(x**2 + y**2)
     L = (Cl*p*(v_x*v_x+v_y*v_y)*A)/2
     D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2
+    
+    if dsol < 11000:
+    # temp. de l'air en fonction de la hauteur. tous les 100m, on perd 0.65K
+        Temp = tempDepart - dsol*(0.0065)
+        
+    Hs = (R * Temp) / (Mmo * g)
+    p = p0 * math.exp(- dsol / Hs)
+    
+    g = (G*M)/(d*d) 
+    
+    if dsol > 0:
+        gx = -g*(x/dsol)
+        gy = -g*(y/dsol)
+    else:
+        gx = 0
+        gy = g
     
     if not (v_x == 0 and v_y== 0):
         Oy = v_y/math.sqrt(v_x*v_x + v_y*v_y)
@@ -165,15 +204,15 @@ while y >= 0 and t<30000:
         
     Ly = L*Ox
     Dy = -D*Oy
-    Hs = (R * Temp) / (Mmo * g)
-    p = p0 * math.exp(- y / Hs)
-    v_y = ((-m1*g*dt + m1*v_y) + Ly*dt + Dy*dt) / (m1)
-    y = v_y*dt + y
-    v_x = ((m1*v_x) + Lx*dt + Dx*dt) / m1 
-    x = x + v_x * dt
-    t = t + dt 
-    d = rT + y
-    g = (G*M)/(d*d) 
+    Lx = L*Oy
+    Dx = -D*Ox
+    
+    
+    
+    v_y = (m1*gy*dt + m1*v_y + Ly*dt + Dy*dt) / (m1)
+    v_x = v_x = (m1*gx*dt + m1*v_x + Dx*dt + Lx*dt ) / (m1)
+
+
     
     temps.append(t)
     position_y.append(y)
