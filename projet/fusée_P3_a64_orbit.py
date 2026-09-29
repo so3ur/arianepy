@@ -13,15 +13,15 @@ y0 = 6371000
 dsol0 = 0
 v0_y = 0  #   Vitesse initiale (m/s)
 m01 = 860000 # masse initiale
-mf1 = 165000 # masse finale
-mf2 = 34000  # 2e etage tout seul fait 31000kg
-mf3 = 18000 # 3e masse finale
+mf1 = 242000 # masse finale
+mf2 = 82000  # 2e etage tout seul fait 31000kg
+mf3 = 37000 # 3e masse finale
 mf4 = 4000
-dm1 = 3800 # débit de masse 1er étage
-dm2 = 750 # débit de masse 2e étage
-dm3 = 45
-dm4 = 11
-ve1 = 2800 # vitesse d'éjection du carburant (m/s)
+dm1 = 6600 # débit de masse 1er étage
+dm2 = 735 # débit de masse 2e étage
+dm3 = 50
+dm4 = 0
+ve1 = 2710 # vitesse d'éjection du carburant (m/s)
 ve2 = 4220
 ve3 = 4560
 ve4 = 4560
@@ -79,7 +79,7 @@ def etage(mf, m, dm, ve):
 
     global v_y , t , dt , Ly , ve_y , Dy , y , x ,  Cd , Cl , v_x , ve_x , g , A , al , p , Oy , Ox , d , g , G , M , Lx , Dx , rT , Hs , R , Mmo , Tmoy , Temp , tempDepart, Ly, Lx , dsol , gx , gy
     # méthode d'Euler pour calculer la vitesse et la position
-    while y >= 0 and m > mf:
+    while dsol >= 0 and m > mf:
     
         t = t + dt 
         y = v_y*dt + y
@@ -97,12 +97,10 @@ def etage(mf, m, dm, ve):
         
         
         g = (G*M)/(d*d) # nouveau g 
-        if dsol > 0:
-            gx = -g*(x/d)
-            gy = -g*(y/d)
-        else:
-            gx = 0
-            gy = g
+
+        gx = -g*(x/d)
+        gy = -g*(y/d)
+
         
 
         L = (Cl*p*(v_x*v_x + v_y*v_y)*A)/2
@@ -163,14 +161,15 @@ if m1 >= mf3:
     m1 = m1 - 8000
     m1=etage(mf3, m1, dm3 , ve3) 
 
+
+
 print('FIN ETAGE 3')
 
-if m1 > mf4:
-    m1=etage(mf4, m1, dm4 , ve4)
 
-    print('RETOMBÉE:')
 
-while t<3000:
+print('RETOMBÉE:')
+
+while dsol>=0 and t<30000:
     
     t = t + dt 
     dsol = math.sqrt(x**2 + y**2) - rT
@@ -192,8 +191,8 @@ while t<3000:
     g = (G*M)/(d*d) 
     
     if dsol > 0:
-        gx = -g*(x/dsol)
-        gy = -g*(y/dsol)
+        gx = -g*(x/d)
+        gy = -g*(y/d)
     else:
         gx = 0
         gy = g
