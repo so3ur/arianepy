@@ -70,29 +70,20 @@ while y >= 0:
 
     if m >= mf:
         v_y = ((-m*g*dt - dm*dt*ve_y + m*v_y) + Ly*dt + Dy*dt) / (m - dm*dt)
-        v_x = ((m*v_x-dm*dt*ve_x) + Dx*dt + Lx*dt) /(m - dm*dt) 
+        # v_x = ((m*v_x-dm*dt*ve_x) + Dx*dt + Lx*dt) /(m - dm*dt) 
     else: #dm*dt = 0
             v_y = ((-mf*g*dt + mf*v_y) + Ly*dt + Dy*dt) / (mf)
             # v_x = ((-mf*v_x)+ Dx*dt + Lx*dt) / (mf)
-    print(y)
-
+    m = m - dm*dt
   
 
     
     temps.append(t)
     vitesse_y.append(v_y)
     position_y.append(y)
-
-    
-    
     vitesse_x.append(v_x)
     position_x.append(x)
-    
 
-
-
-
-    m = m - dm*dt
 
 
 # graph y(t)

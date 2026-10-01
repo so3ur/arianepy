@@ -119,23 +119,27 @@ if m1 >= mf1:
 
 
 print("FIN ETAGE 1")
+print(t)
 
 # si la masse > que la 2e masse finale, 2e etage
 if m1 >= mf2:
     m1 = m1 - 23000 # moins le poids de l'étage largué 
     etage(mf2 , m1, dm2 , ve2)
 
-print('FIN ETAGE 2')
+print('FIN ETAGE 2 à')
+print(t)
+print('secondes')
 # si la masse > que la 3e masse finale, 3e etage
 if m1 >= mf3:
     m1 = m1 - 14000
     etage(mf3, m1, dm3 , ve3) 
 
 print('FIN ETAGE 3')
-if m1 > mf4:
-    # m1 = m1 - 4000
-    etage(mf4, m1, dm4 , ve4)
+print(t)
 
+
+print('FIN ETAGE 4')
+print(t)
 print('RETOMBÉE')
 while y >= 0:
     v_y = ((-mf2*g*dt + mf2*v_y) + Ly*dt + Dy*dt) / (mf2)
@@ -228,7 +232,9 @@ if m1 >= mf2:
     m1 = m1 - 23000 # moins le poids de l'étage largué 
     etage(mf2 , m1, dm2 , ve2)
     print(g)
-print('FIN ETAGE 2')
+print('FIN ETAGE 2 à')
+print(t)
+print('secondes')
 # si la masse > que la 3e masse finale, 3e etage
 if m1 >= mf3:
     m1 = m1 - 14000

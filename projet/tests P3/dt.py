@@ -6,11 +6,11 @@ import numpy as np
 
 
 tempsFinal = []
-cdList = []
-for Cd in range(0, 30, 1):
+dtList = []
+for dt_val in np.arange(0.005, 0.1, 0.0001):
     # Paramètres du mouvement:
     t0 = 0  # Temps initial (s)
-    dt = 0.005  # Pas de temps (s)
+    dt = dt_val  # Pas de temps (s)
     y0 = 6371000
     dsol0 = 0
     v0_y = 0  #   Vitesse initiale (m/s)
@@ -33,7 +33,7 @@ for Cd in range(0, 30, 1):
     gx0 = 0
     gy0 = 0
     p0 = 1.225 # masse volumique (kg/m³) - NIVEAU MER
-    #Cd = 9.8 # coefficient de traînée
+    Cd = 0.1 # coefficient de traînée
     Cl = 0 # coeff. portée
     A = 10
     Ox0 = 2.65 *10**(-4)
@@ -220,7 +220,7 @@ for Cd in range(0, 30, 1):
     print(t)
     print(tempsFinal)
     tempsFinal.append(t)
-    cdList.append(Cd)
+    dtList.append(dt)
     print('Fin!')
 
 
@@ -229,7 +229,7 @@ for Cd in range(0, 30, 1):
 plt.figure(figsize=(10, 6))
 # Courbe de la vitesse (axe y)
 plt.subplot(1, 1, 1)
-plt.plot(cdList, tempsFinal , label="hauteur(m)", color="purple")
+plt.plot(dtList, tempsFinal , label="hauteur(m)", color="purple")
 plt.title("Temps de vol en fonction du coefficient de trainée")
 plt.xlabel("Cd")
 plt.ylabel("Temps(s)")
