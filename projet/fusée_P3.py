@@ -121,7 +121,6 @@ def etage(mf, m, dm, ve):
 
 # si la masse > que la 1e masse finale, 1er étage
 if m1 >= mf1:
-    print(m1)
     m1=etage(mf1 , m1 , dm1 , ve1)
     print(m1)
 

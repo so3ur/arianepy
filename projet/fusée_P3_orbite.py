@@ -31,7 +31,7 @@ g0 = 9.81
 gx0 = 0
 gy0 = 0
 p0 = 1.225 # masse volumique (kg/m³) - NIVEAU MER
-Cd = 9.8 # coefficient de traînée
+Cd = 0.1 # coefficient de traînée
 Cl = 0 # coeff. portée
 A = 10
 Ox0 = 2.65 *10**(-4)
@@ -142,9 +142,8 @@ def etage(mf, m, dm, ve):
 
 # si la masse > que la 1e masse finale, 1er étage
 if m1 >= mf1:
-    print(m1)
     m1=etage(mf1 , m1 , dm1 , ve1)
-    print(m1)
+
 
 
 print("FIN ETAGE 1")
