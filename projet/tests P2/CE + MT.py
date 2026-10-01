@@ -44,6 +44,7 @@ vitesse_x = []
 position_x = []
 energie_cin = []
 energie_pot = []
+masse = []
 
 # Conditions initiales
 t = t0
@@ -105,7 +106,7 @@ def etage(mf, m, dm, ve):
         vitesse_y.append(v_y)
         vitesse_x.append(v_x)
         position_x.append(x)
-        
+        masse.append(m)
         #calcul de l'energie cinetique et de pesanteur
         Ecin = 0.5*m*v_y*v_y
         print(Ecin)
@@ -154,7 +155,7 @@ while y >= 0:
     temps.append(t)
     position_y.append(y)
     vitesse_y.append(v_y)
-    
+    masse.append(m1)
 
 
 
@@ -186,3 +187,16 @@ plt.legend()
 
 plt.show()
 
+# Tracé des courbes
+plt.figure(figsize=(10, 6))
+# Courbe de la vitesse (axe y)
+plt.subplot(1, 1, 1)
+# CORRECTION UNIQUE ICI : Remplacement de 'm1' (variable unique) par 'masse' (liste) pour que le graphique s'affiche
+plt.plot(temps, masse, label="masse(kg)", color="purple") 
+plt.title("Masse en fonction du temps (Méthode d'Euler) ")
+plt.xlabel("Temps (s)")
+plt.ylabel("Masse (kg)")
+plt.grid(True)
+plt.legend()
+
+plt.show()
