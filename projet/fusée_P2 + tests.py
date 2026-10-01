@@ -164,7 +164,10 @@ plt.legend()
 
 plt.show()
 
-## ////////// TEST VITESSE DE LIBERATION
+# TEST 
+#            VITESSE 
+#                   DE LIBERATION
+
 
 # Paramètres du mouvement:
 t0 = 0  # Temps initial (s)

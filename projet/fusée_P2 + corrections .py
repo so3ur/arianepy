@@ -74,13 +74,8 @@ def etage(mf, m, dm, ve):
         t = t + dt 
         y = v_y*dt + y
         
-        if y < 11000:
-        # temp. de l'air en fonction de la hauteur. tous les 100m, on perd 0.65K
-            Temp = tempDepart - y*(0.0065)
+
             
-        # pression atmospherique:
-        Hs = (R * Temp) / (Mmo * g)
-        p = p0 * math.exp(- y / Hs)
         # x = x + v_x*dt
         # print(p)
         L = (Cl*p*(v_x*v_x+v_y*v_y)*A)/2
@@ -152,15 +147,10 @@ if m1 > mf4:
 print('RETOMBÉE')
 
 while y >= 0:
-    L = (Cl*p*(v_x*v_x+v_y*v_y)*A)/2
+    L = (Cl*p*(v_x*v_x + v_y*v_y)*A)/2
     D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2
     Ly = L*Ox
     Dy = -D*Oy
-    if y < 11000:
-        # temp. de l'air en fonction de la hauteur. tous les 100m, on perd 0.65K
-        Temp = tempDepart - y*(0.0065)
-    Hs = (R * Temp) / (Mmo * g)
-    p = p0 * math.exp(- y / Hs)
     v_y = ((-m1*g*dt + m1*v_y) + Ly*dt + Dy*dt) / (m1)
     y = v_y*dt + y
     t = t + dt 
