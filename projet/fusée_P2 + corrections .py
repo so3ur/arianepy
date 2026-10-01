@@ -120,7 +120,7 @@ if m1 >= mf1:
     print(m1)
 
 
-print("FIN ETAGE 1")
+print('FIN ETAGE 1 à', t ,'secondes.' )
 
 # si la masse > que la 2e masse finale, 2e etage
 if m1 >= mf2:
@@ -129,23 +129,24 @@ if m1 >= mf2:
 
     m1=etage(mf2 , m1, dm2 , ve2)
 
-print('FIN ETAGE 2')
+print(t)
+
+print('FIN ETAGE 2 à' , t , 'secondes.')
 
 # si la masse > que la 3e masse finale, 3e etage
 if m1 >= mf3:
    # m1 = etage(mf2, m1, dm2, ve2)
     m1 = m1 - 8000
     m1=etage(mf3, m1, dm3 , ve3) 
+print('FIN ETAGE 3', t , 'secondes.')
 
-print('FIN ETAGE 3')
+# dernier largage
+m1 = mf4
+print('dernière masse:', m1)
 
-if m1 > mf4:
-    #m1 = etage(mf3, m1, dm3, ve3)
-
-    m1=etage(mf4, m1, dm4 , ve4)
 
 print('RETOMBÉE')
-
+print(t)
 while y >= 0:
     L = (Cl*p*(v_x*v_x + v_y*v_y)*A)/2
     D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2
@@ -160,7 +161,7 @@ while y >= 0:
     temps.append(t)
     position_y.append(y)
     vitesse_y.append(v_y)
-    
+print(t)
 
 print('Fin!')
 
