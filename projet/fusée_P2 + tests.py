@@ -142,7 +142,7 @@ print('FIN ETAGE 4')
 print(t)
 print('RETOMBÉE')
 while y >= 0:
-    v_y = ((-mf2*g*dt + mf2*v_y) + Ly*dt + Dy*dt) / (mf2)
+    v_y = ((-mf3*g*dt + mf3*v_y) + Ly*dt + Dy*dt) / (mf3)
     y = v_y*dt + y
     t = t + dt 
     print(v_y)
