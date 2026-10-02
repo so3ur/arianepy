@@ -128,7 +128,7 @@ def etage(mf, m, dm, ve):
         temps.append(t)
     
 
-        print(y)
+
         position_y.append(y)
         vitesse_y.append(v_y)
         vitesse_x.append(v_x)
@@ -146,14 +146,14 @@ if m1 >= mf1:
 
 
 
-print("FIN ETAGE 1")
+print("FIN ETAGE 1", t)
 
 # si la masse > que la 2e masse finale, 2e etage
 if m1 >= mf2:
     m1 = m1 - 35000 # moins le poids de l'étage largué 
     m1=etage(mf2 , m1, dm2 , ve2)
 
-print('FIN ETAGE 2')
+print('FIN ETAGE 2 ', t)
 
 # si la masse > que la 3e masse finale, 3e etage
 if m1 >= mf3:
@@ -162,7 +162,7 @@ if m1 >= mf3:
 
 
 
-print('FIN ETAGE 3')
+print('FIN ETAGE 3', t)
 
 
 
