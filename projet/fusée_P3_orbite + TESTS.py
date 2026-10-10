@@ -1,0 +1,724 @@
+
+import matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+import math
+import numpy as np
+
+# STRUCTURE DU FICHIER:
+# ligne 17 - code principal
+# ligne 259 - test coefficient de traînée
+# ligne 436 - test pas de temps
+
+
+# CODE 
+#       PRINCIPAL
+#                   3E PARTIE
+#                               (orbite)
+
+
+# Paramètres du mouvement:
+t0 = 0  # Temps initial (s)
+dt = 0.005  # Pas de temps (s)
+y0 = 6371000
+dsol0 = 0
+v0_y = 0  #   Vitesse initiale (m/s)
+m01 = 860000 # masse initiale
+mf1 = 242000 # masse finale
+mf2 = 82000  # 2e etage tout seul fait 31000kg
+mf3 = 37000 # 3e masse finale
+mf4 = 4000
+dm1 = 6600 # débit de masse 1er étage
+dm2 = 735 # débit de masse 2e étage
+dm3 = 50
+dm4 = 0
+ve1 = 2710 # vitesse d'éjection du carburant (m/s)
+ve2 = 4220
+ve3 = 4560
+ve4 = 4560
+x0 = 0
+v0_x = 0  # Vitesse initiale (m/s)
+g0 = 9.81
+gx0 = 0
+gy0 = 0
+p0 = 1.225 # masse volumique (kg/m³) - NIVEAU MER
+Cd = 0.1 # coefficient de traînée
+Cl = 0 # coeff. portée
+A = 10
+Ox0 = 2.65 *10**(-4)
+Oy0 = math.sqrt(1-Ox0**2)
+rT = 6371000 # Rayon de la terre (m)
+G = 0.0000000000667 #Nm²/Kg² 
+M = 5972000000000000000000000 # Masse de la terre (kg)
+R = 8.314       # Constante des gaz parfaits (J/(mol·K))
+tempDepart = 288.15      # Température moyenne (K) ~15°C 
+Mmo = 0.02896     # Masse molaire de l'air (kg/mol)
+
+# Initialisation des listes
+temps = []
+vitesse_y = []
+position_y = []
+vitesse_x = []
+position_x = []
+
+
+
+# Conditions initiales
+t = t0
+m1 = m01
+v_y = v0_y 
+y = y0
+dsol = dsol0
+v_x = v0_x
+x = x0
+Ox = Ox0 
+Oy = Oy0
+mf = mf1
+g = g0
+gx = gx0
+gy = gy0
+p = p0
+Temp = tempDepart
+Lx = 0
+Ly = 0
+Dx = 0
+Dy = 0
+
+
+# fonction étage en fonction de la masse finale, la masse, et le débit de masse
+def etage(mf, m, dm, ve):
+
+    global v_y , t , dt , Ly , ve_y , Dy , y , x ,  Cd , Cl , v_x , ve_x , g , A , al , p , Oy , Ox , d , g , G , M , Lx , Dx , rT , Hs , R , Mmo , Tmoy , Temp , tempDepart, Ly, Lx , dsol , gx , gy
+    # méthode d'Euler pour calculer la vitesse et la position
+    while dsol >= 0 and m > mf:
+    
+        t = t + dt 
+        y = v_y*dt + y
+        x = x + v_x*dt 
+        dsol = math.sqrt(x**2 + y**2) - rT
+        if dsol < 11000:
+        # temp. de l'air en fonction de la hauteur. tous les 100m, on perd 0.65K
+            Temp = tempDepart - dsol*(0.0065)
+            
+        # pression atmospherique:
+        Hs = (R * Temp) / (Mmo * g)
+        p = p0 * math.exp(- dsol / Hs)
+        
+        d = math.sqrt(x**2 + y**2) # distance au centre de la terre
+        
+        
+        g = (G*M)/(d*d) # nouveau g 
+
+        gx = -g*(x/d)
+        gy = -g*(y/d)
+
+        
+
+        L = (Cl*p*(v_x*v_x + v_y*v_y)*A)/2
+        D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2 #traînée, pas projetée
+
+        if not (v_y == 0 and v_x == 0):
+            Oy = v_y/math.sqrt(v_x*v_x + v_y*v_y)
+            
+            Ox = v_x/math.sqrt(v_x*v_x + v_y*v_y)
+
+        Lx = L*Oy
+        Ly = L*Ox
+        Dx = -D*Ox
+        Dy = -D*Oy
+
+        ve_x = (-ve*Ox) + v_x
+        ve_y = (-ve*Oy) + v_y
+        
+        v_y = (m*v_y - dm * dt * ve_y + m*gy*dt + Ly * dt + Dy * dt) / (m - dm * dt)
+        v_x = (m * v_x - dm * dt * ve_x + m * gx * dt + Lx * dt + Dx * dt) / (m - dm * dt)
+
+        m = m - dm*dt
+    
+        
+        temps.append(t)
+    
+
+
+        position_y.append(y)
+        vitesse_y.append(v_y)
+        vitesse_x.append(v_x)
+        position_x.append(x)
+        
+    return(m)
+        
+        
+
+
+
+# si la masse > que la 1e masse finale, 1er étage
+if m1 >= mf1:
+    m1=etage(mf1 , m1 , dm1 , ve1)
+
+
+
+print("FIN ETAGE 1", t)
+
+# si la masse > que la 2e masse finale, 2e etage
+if m1 >= mf2:
+    m1 = m1 - 35000 # moins le poids de l'étage largué 
+    m1=etage(mf2 , m1, dm2 , ve2)
+
+print('FIN ETAGE 2 ', t)
+
+# si la masse > que la 3e masse finale, 3e etage
+if m1 >= mf3:
+    m1 = m1 - 8000
+    m1=etage(mf3, m1, dm3 , ve3) 
+
+
+
+print('FIN ETAGE 3', t)
+
+
+
+print('RETOMBÉE:')
+
+while dsol>=0 and t<30000:
+    
+    t = t + dt 
+    dsol = math.sqrt(x**2 + y**2) - rT
+    y = v_y*dt + y
+    x = x + v_x * dt
+    
+
+    d = math.sqrt(x**2 + y**2)
+    L = (Cl*p*(v_x*v_x+v_y*v_y)*A)/2
+    D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2
+    
+    if dsol < 11000:
+    # temp. de l'air en fonction de la hauteur. tous les 100m, on perd 0.65K
+        Temp = tempDepart - dsol*(0.0065)
+        
+    Hs = (R * Temp) / (Mmo * g)
+    p = p0 * math.exp(- dsol / Hs)
+    
+    g = (G*M)/(d*d) 
+    
+    if dsol > 0:
+        gx = -g*(x/d)
+        gy = -g*(y/d)
+    else:
+        gx = 0
+        gy = g
+    
+    if not (v_x == 0 and v_y== 0):
+        Oy = v_y/math.sqrt(v_x*v_x + v_y*v_y)
+        Ox = v_x/math.sqrt(v_x*v_x + v_y*v_y)
+        
+    Ly = L*Ox
+    Dy = -D*Oy
+    Lx = L*Oy
+    Dx = -D*Ox
+    
+    
+    
+    v_y = (m1*gy*dt + m1*v_y + Ly*dt + Dy*dt) / (m1)
+    v_x = v_x = (m1*gx*dt + m1*v_x + Dx*dt + Lx*dt ) / (m1)
+
+
+    
+    temps.append(t)
+    position_y.append(y)
+    vitesse_y.append(v_y)
+    vitesse_x.append(v_x)
+    position_x.append(x)
+    
+
+print('Fin!')
+
+
+
+# Cercle de rayon rT
+R=rT
+theta = np.linspace(0, 2 * np.pi, 400)
+x_cercle = R * np.cos(theta)
+y_cercle = R * np.sin(theta)
+fig, ax = plt.subplots(figsize=(6, 6))
+ax.plot(x_cercle, y_cercle, "b-", label=f"Terre")
+ax.plot(position_x , position_y, "r-", label="Trajectoire (x, y)")
+ax.set_aspect("equal")
+ax.grid(True, alpha = 0.3)
+ax.axhline(0, color="k", lw=0.5)
+ax.axvline(0, color="k", lw=0.5)
+ax.set_xlabel("x")
+ax.set_ylabel("y")
+ax.set_title("Cercle de rayon rT et points (x, y)")
+ax.legend()
+plt.show() 
+
+
+# TEST
+#       COEFFICIENT 
+#                   DE TRAINEE
+#                             (à commenter selon besoin)
+
+tempsFinal = []
+cdList = []
+for cd_val in np.arange(0.1, 30, 0.5):
+    # Paramètres du mouvement:
+    t0 = 0  # Temps initial (s)
+    dt = 0.005  # Pas de temps (s)
+    y0 = 6371000
+    dsol0 = 0
+    v0_y = 0  #   Vitesse initiale (m/s)
+    m01 = 860000 # masse initiale
+    mf1 = 242000 # masse finale
+    mf2 = 82000  # 2e etage tout seul fait 31000kg
+    mf3 = 37000 # 3e masse finale
+    mf4 = 4000
+    dm1 = 6600 # débit de masse 1er étage
+    dm2 = 735 # débit de masse 2e étage
+    dm3 = 50
+    dm4 = 0
+    ve1 = 2710 # vitesse d'éjection du carburant (m/s)
+    ve2 = 4220
+    ve3 = 4560
+    ve4 = 4560
+    x0 = 0
+    v0_x = 0  # Vitesse initiale (m/s)
+    g0 = 9.81
+    gx0 = 0
+    gy0 = 0
+    p0 = 1.225 # masse volumique (kg/m³) - NIVEAU MER
+    Cd = cd_val # coefficient de traînée
+    Cl = 0 # coeff. portée
+    A = 10
+    Ox0 = 2.65 *10**(-4)
+    Oy0 = math.sqrt(1-Ox0**2)
+    rT = 6371000 # Rayon de la terre (m)
+    G = 0.0000000000667 #Nm²/Kg² 
+    M = 5972000000000000000000000 # Masse de la terre (kg)
+    R = 8.314       # Constante des gaz parfaits (J/(mol·K))
+    tempDepart = 288.15      # Température moyenne (K) ~15°C 
+    Mmo = 0.02896     # Masse molaire de l'air (kg/mol)
+
+    # Initialisation des listes
+    temps = []
+    vitesse_y = []
+    position_y = []
+    vitesse_x = []
+    position_x = []
+
+
+    # Conditions initiales
+    t = t0
+    m1 = m01
+    v_y = v0_y 
+    y = y0
+    dsol = dsol0
+    v_x = v0_x
+    x = x0
+    Ox = Ox0 
+    Oy = Oy0
+    mf = mf1
+    g = g0
+    gx = gx0
+    gy = gy0
+    p = p0
+    Temp = tempDepart
+    Lx = 0
+    Ly = 0
+    Dx = 0
+    Dy = 0
+
+    # fonction étage en fonction de la masse finale, la masse, et le débit de masse
+    def etage(mf, m, dm, ve):
+
+        global v_y , t , dt , Ly , ve_y , Dy , y , x ,  Cd , Cl , v_x , ve_x , g , A , al , p , Oy , Ox , d , g , G , M , Lx , Dx , rT , Hs , R , Mmo , Tmoy , Temp , tempDepart, Ly, Lx , dsol , gx , gy
+        # méthode d'Euler pour calculer la vitesse et la position
+        while dsol >= 0 and m > mf:
+        
+            t = t + dt 
+            y = v_y*dt + y
+            x = x + v_x*dt 
+            dsol = math.sqrt(x**2 + y**2) - rT
+            if dsol < 11000:
+            # temp. de l'air en fonction de la hauteur. tous les 100m, on perd 0.65K
+                Temp = tempDepart - dsol*(0.0065)
+                
+            # pression atmospherique:
+            Hs = (R * Temp) / (Mmo * g)
+            p = p0 * math.exp(- dsol / Hs)
+            
+            d = math.sqrt(x**2 + y**2) # distance au centre de la terre
+            
+            
+            g = (G*M)/(d*d) # nouveau g 
+
+            gx = -g*(x/d)
+            gy = -g*(y/d)
+
+            
+
+            L = (Cl*p*(v_x*v_x + v_y*v_y)*A)/2
+            D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2 #traînée, pas projetée
+
+            if not (v_y == 0 and v_x == 0):
+                Oy = v_y/math.sqrt(v_x*v_x + v_y*v_y)
+                
+                Ox = v_x/math.sqrt(v_x*v_x + v_y*v_y)
+
+            Lx = L*Oy
+            Ly = L*Ox
+            Dx = -D*Ox
+            Dy = -D*Oy
+
+            ve_x = (-ve*Ox) + v_x
+            ve_y = (-ve*Oy) + v_y
+            
+            v_y = (m*v_y - dm * dt * ve_y + m*gy*dt + Ly * dt + Dy * dt) / (m - dm * dt)
+            v_x = (m * v_x - dm * dt * ve_x + m * gx * dt + Lx * dt + Dx * dt) / (m - dm * dt)
+
+            m = m - dm*dt
+        
+            
+            #temps.append(t)
+            position_y.append(y)
+            vitesse_y.append(v_y)
+            vitesse_x.append(v_x)
+            position_x.append(x)
+            
+            
+        return(m)
+
+    # si la masse > que la 1e masse finale, 1er étage
+    if m1 >= mf1:
+        m1=etage(mf1 , m1 , dm1 , ve1)
+        
+
+
+    print("FIN ETAGE 1")
+
+    # si la masse > que la 2e masse finale, 2e etage
+    if m1 >= mf2:
+        m1 = m1 - 35000 # moins le poids de l'étage largué 
+        m1=etage(mf2 , m1, dm2 , ve2)
+
+    print('FIN ETAGE 2')
+
+    # si la masse > que la 3e masse finale, 3e etage
+    if m1 >= mf3:
+        m1 = m1 - 8000
+        m1=etage(mf3, m1, dm3 , ve3) 
+
+
+
+    print('FIN ETAGE 3')
+
+
+
+    print('RETOMBÉE:')
+
+    while dsol>=0 and t<30000:
+        
+        t = t + dt 
+        dsol = math.sqrt(x**2 + y**2) - rT
+        y = v_y*dt + y
+        x = x + v_x * dt
+        
+
+        d = math.sqrt(x**2 + y**2)
+        L = (Cl*p*(v_x*v_x+v_y*v_y)*A)/2
+        D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2
+        
+        if dsol < 11000:
+        # temp. de l'air en fonction de la hauteur. tous les 100m, on perd 0.65K
+            Temp = tempDepart - dsol*(0.0065)
+            
+        Hs = (R * Temp) / (Mmo * g)
+        p = p0 * math.exp(- dsol / Hs)
+        
+        g = (G*M)/(d*d) 
+        
+        if dsol > 0:
+            gx = -g*(x/d)
+            gy = -g*(y/d)
+        else:
+            gx = 0
+            gy = g
+        
+        if not (v_x == 0 and v_y== 0):
+            Oy = v_y/math.sqrt(v_x*v_x + v_y*v_y)
+            Ox = v_x/math.sqrt(v_x*v_x + v_y*v_y)
+            
+        Ly = L*Ox
+        Dy = -D*Oy
+        Lx = L*Oy
+        Dx = -D*Ox
+        
+        
+        
+        v_y = (m1*gy*dt + m1*v_y + Ly*dt + Dy*dt) / (m1)
+        v_x = v_x = (m1*gx*dt + m1*v_x + Dx*dt + Lx*dt ) / (m1)
+
+
+        
+        # temps.append(t)
+        position_y.append(y)
+        vitesse_y.append(v_y)
+        vitesse_x.append(v_x)
+        position_x.append(x)
+
+    print(t)
+    print(tempsFinal)
+    tempsFinal.append(t)
+    cdList.append(Cd)
+    print('Fin!')
+
+
+
+# Tracé des courbes
+plt.figure(figsize=(10, 6))
+# Courbe de la vitesse (axe y)
+plt.subplot(1, 1, 1)
+plt.plot(cdList, tempsFinal , label="hauteur(m)", color="purple")
+plt.title("Temps de vol en fonction du coefficient de trainée")
+plt.xlabel("Cd")
+plt.ylabel("Temps(s)")
+plt.grid(True)
+plt.legend()
+plt.show()
+
+
+# TEST
+#       PAS 
+#           DE TEMPS
+#                    (à commenter selon besoin)
+
+tempsFinal = []
+dtList = []
+for dt_val in np.arange(0.005, 0.1, 0.0001):
+    # Paramètres du mouvement:
+    t0 = 0  # Temps initial (s)
+    dt = dt_val  # Pas de temps (s)
+    y0 = 6371000
+    dsol0 = 0
+    v0_y = 0  #   Vitesse initiale (m/s)
+    m01 = 860000 # masse initiale
+    mf1 = 242000 # masse finale
+    mf2 = 82000  # 2e etage tout seul fait 31000kg
+    mf3 = 37000 # 3e masse finale
+    mf4 = 4000
+    dm1 = 6600 # débit de masse 1er étage
+    dm2 = 735 # débit de masse 2e étage
+    dm3 = 50
+    dm4 = 0
+    ve1 = 2710 # vitesse d'éjection du carburant (m/s)
+    ve2 = 4220
+    ve3 = 4560
+    ve4 = 4560
+    x0 = 0
+    v0_x = 0  # Vitesse initiale (m/s)
+    g0 = 9.81
+    gx0 = 0
+    gy0 = 0
+    p0 = 1.225 # masse volumique (kg/m³) - NIVEAU MER
+    Cd = 0.1 # coefficient de traînée
+    Cl = 0 # coeff. portée
+    A = 10
+    Ox0 = 2.65 *10**(-4)
+    Oy0 = math.sqrt(1-Ox0**2)
+    rT = 6371000 # Rayon de la terre (m)
+    G = 0.0000000000667 #Nm²/Kg² 
+    M = 5972000000000000000000000 # Masse de la terre (kg)
+    R = 8.314       # Constante des gaz parfaits (J/(mol·K))
+    tempDepart = 288.15      # Température moyenne (K) ~15°C 
+    Mmo = 0.02896     # Masse molaire de l'air (kg/mol)
+
+    # Initialisation des listes
+    temps = []
+    vitesse_y = []
+    position_y = []
+    vitesse_x = []
+    position_x = []
+
+
+    # Conditions initiales
+    t = t0
+    m1 = m01
+    v_y = v0_y 
+    y = y0
+    dsol = dsol0
+    v_x = v0_x
+    x = x0
+    Ox = Ox0 
+    Oy = Oy0
+    mf = mf1
+    g = g0
+    gx = gx0
+    gy = gy0
+    p = p0
+    Temp = tempDepart
+    Lx = 0
+    Ly = 0
+    Dx = 0
+    Dy = 0
+
+
+    # fonction étage en fonction de la masse finale, la masse, et le débit de masse
+    def etage(mf, m, dm, ve):
+
+        global v_y , t , dt , Ly , ve_y , Dy , y , x ,  Cd , Cl , v_x , ve_x , g , A , al , p , Oy , Ox , d , g , G , M , Lx , Dx , rT , Hs , R , Mmo , Tmoy , Temp , tempDepart, Ly, Lx , dsol , gx , gy
+        # méthode d'Euler pour calculer la vitesse et la position
+        while dsol >= 0 and m > mf:
+        
+            t = t + dt 
+            y = v_y*dt + y
+            x = x + v_x*dt 
+            dsol = math.sqrt(x**2 + y**2) - rT
+            if dsol < 11000:
+            # temp. de l'air en fonction de la hauteur. tous les 100m, on perd 0.65K
+                Temp = tempDepart - dsol*(0.0065)
+                
+            # pression atmospherique:
+            Hs = (R * Temp) / (Mmo * g)
+            p = p0 * math.exp(- dsol / Hs)
+            
+            d = math.sqrt(x**2 + y**2) # distance au centre de la terre
+            
+            
+            g = (G*M)/(d*d) # nouveau g 
+
+            gx = -g*(x/d)
+            gy = -g*(y/d)
+
+            
+
+            L = (Cl*p*(v_x*v_x + v_y*v_y)*A)/2
+            D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2 #traînée, pas projetée
+
+            if not (v_y == 0 and v_x == 0):
+                Oy = v_y/math.sqrt(v_x*v_x + v_y*v_y)
+                
+                Ox = v_x/math.sqrt(v_x*v_x + v_y*v_y)
+
+            Lx = L*Oy
+            Ly = L*Ox
+            Dx = -D*Ox
+            Dy = -D*Oy
+
+            ve_x = (-ve*Ox) + v_x
+            ve_y = (-ve*Oy) + v_y
+            
+            v_y = (m*v_y - dm * dt * ve_y + m*gy*dt + Ly * dt + Dy * dt) / (m - dm * dt)
+            v_x = (m * v_x - dm * dt * ve_x + m * gx * dt + Lx * dt + Dx * dt) / (m - dm * dt)
+
+            m = m - dm*dt
+        
+            
+            #temps.append(t)
+            position_y.append(y)
+            vitesse_y.append(v_y)
+            vitesse_x.append(v_x)
+            position_x.append(x)
+            
+            
+        return(m)
+            
+            
+
+
+
+    # si la masse > que la 1e masse finale, 1er étage
+    if m1 >= mf1:
+        m1=etage(mf1 , m1 , dm1 , ve1)
+        
+
+
+    print("FIN ETAGE 1")
+
+    # si la masse > que la 2e masse finale, 2e etage
+    if m1 >= mf2:
+        m1 = m1 - 35000 # moins le poids de l'étage largué 
+        m1=etage(mf2 , m1, dm2 , ve2)
+
+    print('FIN ETAGE 2')
+
+    # si la masse > que la 3e masse finale, 3e etage
+    if m1 >= mf3:
+        m1 = m1 - 8000
+        m1=etage(mf3, m1, dm3 , ve3) 
+
+
+
+    print('FIN ETAGE 3')
+
+
+
+    print('RETOMBÉE:')
+
+    while dsol>=0 and t<30000:
+        
+        t = t + dt 
+        dsol = math.sqrt(x**2 + y**2) - rT
+        y = v_y*dt + y
+        x = x + v_x * dt
+        
+
+        d = math.sqrt(x**2 + y**2)
+        L = (Cl*p*(v_x*v_x+v_y*v_y)*A)/2
+        D = (Cd*p*(v_x*v_x + v_y*v_y)*A)/2
+        
+        if dsol < 11000:
+        # temp. de l'air en fonction de la hauteur. tous les 100m, on perd 0.65K
+            Temp = tempDepart - dsol*(0.0065)
+            
+        Hs = (R * Temp) / (Mmo * g)
+        p = p0 * math.exp(- dsol / Hs)
+        
+        g = (G*M)/(d*d) 
+        
+        if dsol > 0:
+            gx = -g*(x/d)
+            gy = -g*(y/d)
+        else:
+            gx = 0
+            gy = g
+        
+        if not (v_x == 0 and v_y== 0):
+            Oy = v_y/math.sqrt(v_x*v_x + v_y*v_y)
+            Ox = v_x/math.sqrt(v_x*v_x + v_y*v_y)
+            
+        Ly = L*Ox
+        Dy = -D*Oy
+        Lx = L*Oy
+        Dx = -D*Ox
+        
+        
+        
+        v_y = (m1*gy*dt + m1*v_y + Ly*dt + Dy*dt) / (m1)
+        v_x = v_x = (m1*gx*dt + m1*v_x + Dx*dt + Lx*dt ) / (m1)
+
+
+        
+        # temps.append(t)
+        position_y.append(y)
+        vitesse_y.append(v_y)
+        vitesse_x.append(v_x)
+        position_x.append(x)
+
+    
+    print(tempsFinal)
+    tempsFinal.append(t)
+    dtList.append(dt)
+    print('Fin!')
+
+
+
+# Tracé des courbes
+plt.figure(figsize=(10, 6))
+# Courbe de la vitesse (axe y)
+plt.subplot(1, 1, 1)
+plt.plot(dtList, tempsFinal , label="hauteur(m)", color="purple")
+plt.title("Temps de vol en fonction du pas de temps")
+plt.xlabel("Pas de temps(s)")
+plt.ylabel("Temps de vol(s)")
+plt.grid(True)
+plt.legend()
+plt.show()
